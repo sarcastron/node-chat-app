@@ -1,3 +1,6 @@
 module.exports = {
-    "extends": "airbnb-base"
+    "extends": "airbnb-base",
+    rules: {
+        "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
+    },
 };
