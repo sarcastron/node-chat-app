@@ -25,10 +25,11 @@ io.on('connection', (socket) => {
     'New user joined',
   ));
 
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, callback) => {
     console.log('Message Received', message);
     const { from, text } = message;
     io.emit('newMessage', generateMessage(from, text));
+    callback({ success: true });
   });
 
   socket.on('disconnect', () => {
