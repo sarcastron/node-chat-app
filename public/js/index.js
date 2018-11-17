@@ -1,4 +1,4 @@
-/* global io jQuery, navigator, alert */
+/* global io jQuery, navigator, alert, moment, Mustache */
 const socket = io();
 socket.on('connect', function onConnect() {
   console.log('Connected to server');
@@ -9,20 +9,23 @@ socket.on('disconnect', function onDisconnect() {
 });
 
 socket.on('newMessage', function onNewMessage(message) {
-  console.log('New message!', message);
-  const li = jQuery('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
-  jQuery('#messages').append(li);
+  const template = jQuery('#message-template').html();
+  const html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: moment(message.createdAt).format('h:mm a'),
+  });
+  jQuery('#messages').append(html);
 });
 
 socket.on('newLocationMessage', function newLocMessage(message) {
-  console.log(message);
-  const li = jQuery('<li></li>');
-  const a = jQuery('<a target="_BLANK">My Current Location</a>');
-  a.attr('href', message.url);
-  li.text(`${message.from}: `);
-  li.append(a);
-  jQuery('#messages').append(li);
+  const template = jQuery('#location-message-template').html();
+  const html = Mustache.render(template, {
+    url: message.url,
+    from: message.from,
+    createdAt: moment(message.createdAt).format('h:mm a'),
+  });
+  jQuery('#messages').append(html);
 });
 
 jQuery('#message-form').on('submit', function onFormSubmit(event) {
