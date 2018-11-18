@@ -21,11 +21,8 @@ socket.on('connect', function onConnect() {
   const params = jQuery.deparam(window.location.search);
   socket.emit('join', params, function joinFailed(err) {
     if (err) {
-      console.error(err);
       alert(err);
       window.location.href = '/';
-    } else {
-      console.log('all good');
     }
   });
 });
@@ -35,7 +32,6 @@ socket.on('disconnect', function onDisconnect() {
 });
 
 socket.on('updateUserList', (users) => {
-  console.log('users list', users);
   const ol = jQuery('<ol></ol>');
   users.forEach(function addListItem(user) {
     ol.append(jQuery('<li></li>').text(user));
@@ -69,7 +65,6 @@ jQuery('#message-form').on('submit', function onFormSubmit(event) {
   event.preventDefault();
   const messageInput = jQuery('input[name=message]');
   socket.emit('createMessage', {
-    from: 'User',
     text: messageInput.val(),
   }, function createMessageCallback() {
     messageInput.val('');
