@@ -1,4 +1,4 @@
-/* global io jQuery, navigator, alert, moment, Mustache */
+/* global io window jQuery navigator alert moment Mustache */
 const socket = io();
 
 function scrollToBottom() {
@@ -18,11 +18,29 @@ function scrollToBottom() {
 }
 
 socket.on('connect', function onConnect() {
-  console.log('Connected to server');
+  const params = jQuery.deparam(window.location.search);
+  socket.emit('join', params, function joinFailed(err) {
+    if (err) {
+      console.error(err);
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('all good');
+    }
+  });
 });
 
 socket.on('disconnect', function onDisconnect() {
   console.log('Disconnected from server.');
+});
+
+socket.on('updateUserList', (users) => {
+  console.log('users list', users);
+  const ol = jQuery('<ol></ol>');
+  users.forEach(function addListItem(user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+  jQuery('#users').html(ol);
 });
 
 socket.on('newMessage', function onNewMessage(message) {
